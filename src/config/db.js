@@ -26,6 +26,9 @@ db.serialize(() => {
         appointment_date TEXT NOT NULL,
         status           TEXT DEFAULT 'Scheduled',
         created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,
+        peso        REAL,
+        temperatura REAL,
+        diagnostico TEXT,
         FOREIGN KEY (pet_id) REFERENCES pets(id)
     )`);
 

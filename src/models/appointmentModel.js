@@ -5,7 +5,8 @@ const AppointmentModel = {
     getAll: (callback) => {
         db.all(`
             SELECT appointments.id, owners.name AS owner_name, pets.name AS pet_name,
-                   appointments.service, appointments.appointment_date, appointments.status
+                   appointments.service, appointments.appointment_date, appointments.status,
+                   appointments.peso, appointments.temperatura, appointments.diagnostico
             FROM appointments
             JOIN pets ON appointments.pet_id = pets.id
             JOIN owners ON pets.owner_id = owners.id
@@ -13,7 +14,7 @@ const AppointmentModel = {
         `, [], callback);
     },
 
-    create: (pet_name, owner_name, service, appointment_date, callback) => {
+    create: (pet_name, owner_name, service, appointment_date, peso, temperatura, diagnostico, callback) => {
         db.get("SELECT id FROM owners WHERE name = ?", [owner_name], (err, owner) => {
             if (err) return callback(err);
 
@@ -22,8 +23,11 @@ const AppointmentModel = {
                     if (err) return callback(err);
 
                     const afterPet = (pet_id) => {
-                        db.run("INSERT INTO appointments (pet_id, service, appointment_date) VALUES (?, ?, ?)",
-                            [pet_id, service, appointment_date], callback);
+                        db.run(
+                            "INSERT INTO appointments (pet_id, service, appointment_date, peso, temperatura, diagnostico) VALUES (?, ?, ?, ?, ?, ?)",
+                            [pet_id, service, appointment_date, peso || null, temperatura || null, diagnostico || null],
+                            callback
+                        );
                     };
 
                     if (pet) {
