@@ -1,6 +1,10 @@
 ﻿const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(':memory:');
 
+const bcrypt = require('bcryptjs');
+const adminPass = bcrypt.hashSync('admin123', 10);
+const vetPass = bcrypt.hashSync('vet123', 10);
+
 db.serialize(() => {
 
     db.run(`CREATE TABLE owners (
@@ -9,6 +13,13 @@ db.serialize(() => {
         phone      TEXT,
         email      TEXT
     )`);
+
+    db.run(`CREATE TABLE users (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    role     TEXT NOT NULL CHECK(role IN ('admin', 'veterinario', 'recepcionista'))
+)`);
 
     db.run(`CREATE TABLE pets (
         id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,6 +51,9 @@ db.serialize(() => {
 
     db.run(`INSERT INTO appointments (pet_id, service, appointment_date) VALUES (1, 'Corte de Pelo', '2026-02-25 10:00')`);
     db.run(`INSERT INTO appointments (pet_id, service, appointment_date) VALUES (2, 'Baño y Limpieza', '2026-02-25 11:30')`);
+
+    db.run(`INSERT INTO users (username, password, role) VALUES ('admin', '${adminPass}', 'admin')`);
+    db.run(`INSERT INTO users (username, password, role) VALUES ('drsmith', '${vetPass}', 'veterinario')`);
 
 });
 

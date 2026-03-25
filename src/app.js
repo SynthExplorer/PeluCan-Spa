@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const morgan = require('morgan');
+const session = require('express-session');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 
 const app = express();
@@ -14,6 +15,13 @@ app.set('layout', 'layout');
 
 // Middlewares
 app.use(morgan('dev'));
+
+app.use(session({
+    secret: 'pelucanspa_secret',
+    resave: false,
+    saveUninitialized: false
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
