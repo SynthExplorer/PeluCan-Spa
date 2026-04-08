@@ -1,0 +1,70 @@
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Seleccionar Paciente</h5>
+                <ul class="list-group list-group-flush">
+                    <% pets.forEach(pet => { %>
+                        <a href="/historial/<%= pet.id %>" class="list-group-item list-group-item-action">
+                            <strong><%= pet.name %></strong>
+                            <small class="text-muted d-block">Dueño: <%= pet.owner_name %></small>
+                        </a>
+                    <% }) %>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <% if (petSelected) { %>
+            <h4 class="mb-3">Expediente de: <strong><%= petSelected.name %></strong></h4>
+            <% if (historial.length === 0) { %>
+                <div class="alert alert-info">No hay citas registradas para este paciente.</div>
+            <% } else { %>
+                <% historial.forEach(cita => { %>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="card-subtitle text-muted"><%= cita.appointment_date %></h6>
+                                <span class="badge bg-primary"><%= cita.service %></span>
+                            </div>
+                            <hr>
+                            <% if (cita.peso || cita.temperatura || cita.diagnostico || cita.medicina) { %>
+                                <div class="row mt-2">
+                                    <% if (cita.peso) { %>
+                                        <div class="col-6 mb-2">
+                                            <small class="text-muted">Peso</small>
+                                            <p class="mb-0"><%= cita.peso %> kg</p>
+                                        </div>
+                                    <% } %>
+                                    <% if (cita.temperatura) { %>
+                                        <div class="col-6 mb-2">
+                                            <small class="text-muted">Temperatura</small>
+                                            <p class="mb-0"><%= cita.temperatura %> °C</p>
+                                        </div>
+                                    <% } %>
+                                    <% if (cita.diagnostico) { %>
+                                        <div class="col-12 mb-2">
+                                            <small class="text-muted">Diagnóstico</small>
+                                            <p class="mb-0"><%= cita.diagnostico %></p>
+                                        </div>
+                                    <% } %>
+                                    <% if (cita.medicina) { %>
+                                        <div class="col-12 mb-2">
+                                            <small class="text-muted">Medicina recetada</small>
+                                            <p class="mb-0"><%= cita.medicina %></p>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            <% } else { %>
+                                <p class="text-muted mt-2">Cita sin datos clínicos registrados.</p>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        <% } else { %>
+            <div class="alert alert-secondary">Selecciona un paciente para ver su historial.</div>
+        <% } %>
+    </div>
+</div>

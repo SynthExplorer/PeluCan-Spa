@@ -14,6 +14,30 @@ const AppointmentModel = {
         `, [], callback);
     },
 
+    getHistorialByPet: (pet_id, callback) => {
+    db.all(`
+        SELECT appointments.id, appointments.service, appointments.appointment_date,
+               appointments.status, appointments.peso, appointments.temperatura,
+               appointments.diagnostico, appointments.medicina,
+               pets.name AS pet_name, owners.name AS owner_name
+        FROM appointments
+        JOIN pets ON appointments.pet_id = pets.id
+        JOIN owners ON pets.owner_id = owners.id
+        WHERE appointments.pet_id = ?
+        ORDER BY appointments.appointment_date ASC
+    `, [pet_id], callback);
+},
+
+getAllPets: (callback) => {
+    db.all(`
+        SELECT pets.id, pets.name, owners.name AS owner_name
+        FROM pets
+        JOIN owners ON pets.owner_id = owners.id
+        ORDER BY pets.name ASC
+    `, [], callback);
+},
+
+
     create: (pet_name, owner_name, service, appointment_date, peso, temperatura, diagnostico, callback) => {
         db.get("SELECT id FROM owners WHERE name = ?", [owner_name], (err, owner) => {
             if (err) return callback(err);

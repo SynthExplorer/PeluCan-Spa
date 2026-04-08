@@ -40,6 +40,7 @@ db.serialize(() => {
         peso        REAL,
         temperatura REAL,
         diagnostico TEXT,
+        medicina    TEXT,
         FOREIGN KEY (pet_id) REFERENCES pets(id)
     )`);
 
