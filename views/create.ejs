@@ -47,23 +47,34 @@
                     </div>
 
                     <script>
-                        const servicio = document.getElementById('service');
-                        const camposMedicos = document.getElementById('campos-medicos');
-                        const inputs = camposMedicos.querySelectorAll('input, textarea');
+    const servicio = document.getElementById('service');
+    const camposMedicos = document.getElementById('campos-medicos');
+    const userRole = '<%= user ? user.role : "" %>';
+    const puedeEditarMedico = userRole === 'veterinario' || userRole === 'admin';
 
-                        function toggleCamposMedicos() {
-                            if (servicio.value === 'Consulta Veterinaria') {
-                                camposMedicos.style.display = 'block';
-                                inputs.forEach(input => input.setAttribute('required', 'required'));
-                            } else {
-                                camposMedicos.style.display = 'none';
-                                inputs.forEach(input => input.removeAttribute('required'));
-                            }
-                        }
+    if (!puedeEditarMedico) {
+        camposMedicos.style.display = 'none';
+        camposMedicos.querySelectorAll('input, textarea').forEach(input => {
+            input.removeAttribute('required');
+            input.disabled = true;
+        });
+    } else {
+        const inputs = camposMedicos.querySelectorAll('input, textarea');
 
-                        servicio.addEventListener('change', toggleCamposMedicos);
-                        toggleCamposMedicos();
-                    </script>
+        function toggleCamposMedicos() {
+            if (servicio.value === 'Consulta Veterinaria') {
+                camposMedicos.style.display = 'block';
+                inputs.forEach(input => input.setAttribute('required', 'required'));
+            } else {
+                camposMedicos.style.display = 'none';
+                inputs.forEach(input => input.removeAttribute('required'));
+            }
+        }
+
+        servicio.addEventListener('change', toggleCamposMedicos);
+        toggleCamposMedicos();
+    }
+</script>
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Programar Cita</button>
                         <a href="/" class="btn btn-link text-muted">Cancelar</a>

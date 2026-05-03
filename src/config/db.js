@@ -41,6 +41,7 @@ db.serialize(() => {
         temperatura REAL,
         diagnostico TEXT,
         medicina    TEXT,
+        user_id     INTEGER,
         FOREIGN KEY (pet_id) REFERENCES pets(id)
     )`);
 
@@ -55,6 +56,9 @@ db.serialize(() => {
 
     db.run(`INSERT INTO users (username, password, role) VALUES ('admin', '${adminPass}', 'admin')`);
     db.run(`INSERT INTO users (username, password, role) VALUES ('drsmith', '${vetPass}', 'veterinario')`);
+
+    db.run(`INSERT INTO appointments (pet_id, service, appointment_date, user_id) VALUES (1, 'Corte de Pelo', '2026-02-25 10:00', 1)`);
+    db.run(`INSERT INTO appointments (pet_id, service, appointment_date, user_id) VALUES (2, 'Baño y Limpieza', '2026-02-25 11:30', 1)`);
 
 });
 

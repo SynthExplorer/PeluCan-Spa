@@ -2,7 +2,20 @@ const db = require('../config/db');
 
 const AppointmentModel = {
 
-    getAll: (callback) => {
+    getAll: (user, callback) => {
+    if (user.role === 'admin') {
+        db.all(`
+            SELECT appointments.id, owners.name AS owner_name, pets.name AS pet_name,
+                   appointments.service, appointments.appointment_date, appointments.status,
+                   appointments.peso, appointments.temperatura, appointments.diagnostico,
+                   users.username AS created_by
+            FROM appointments
+            JOIN pets ON appointments.pet_id = pets.id
+            JOIN owners ON pets.owner_id = owners.id
+            LEFT JOIN users ON appointments.user_id = users.id
+            ORDER BY appointments.appointment_date DESC
+        `, [], callback);
+    } else {
         db.all(`
             SELECT appointments.id, owners.name AS owner_name, pets.name AS pet_name,
                    appointments.service, appointments.appointment_date, appointments.status,
@@ -10,9 +23,11 @@ const AppointmentModel = {
             FROM appointments
             JOIN pets ON appointments.pet_id = pets.id
             JOIN owners ON pets.owner_id = owners.id
+            WHERE appointments.user_id = ?
             ORDER BY appointments.appointment_date DESC
-        `, [], callback);
-    },
+        `, [user.id], callback);
+    }
+},
 
     getHistorialByPet: (pet_id, callback) => {
     db.all(`
@@ -38,7 +53,7 @@ getAllPets: (callback) => {
 },
 
 
-    create: (pet_name, owner_name, service, appointment_date, peso, temperatura, diagnostico, callback) => {
+    create: (pet_name, owner_name, service, appointment_date, peso, temperatura, diagnostico, user_id, callback) => {
         db.get("SELECT id FROM owners WHERE name = ?", [owner_name], (err, owner) => {
             if (err) return callback(err);
 
@@ -48,8 +63,8 @@ getAllPets: (callback) => {
 
                     const afterPet = (pet_id) => {
                         db.run(
-                            "INSERT INTO appointments (pet_id, service, appointment_date, peso, temperatura, diagnostico) VALUES (?, ?, ?, ?, ?, ?)",
-                            [pet_id, service, appointment_date, peso || null, temperatura || null, diagnostico || null],
+                            "INSERT INTO appointments (pet_id, service, appointment_date, peso, temperatura, diagnostico, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            [pet_id, service, appointment_date, peso || null, temperatura || null, diagnostico || null, user_id],
                             callback
                         );
                     };

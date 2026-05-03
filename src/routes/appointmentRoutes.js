@@ -9,6 +9,8 @@ const historialController = require('../controllers/historialController');
 router.get('/login', authController.getLogin);
 router.post('/login', authController.postLogin);
 router.get('/logout', authController.logout);
+router.get('/register', authController.getRegister);
+router.post('/register', authController.postRegister);
 
 // Rutas protegidas
 router.get('/historial', isAuthenticated, historialController.getPets);
